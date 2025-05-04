@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - pip install --upgrade pip
+      - pip install sphinx sphinx-rtd-theme
+      
+  pre_build:
+    commands:
+      - echo "Starting documentation build..."
+      
+  build:
+    commands:
+      - cd docs
+      - make html
+      
+artifacts:
+  files:
+    - docs/build/html/**/*
+  discard-paths: no
+  base-directory: docs/build/html
+
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'
