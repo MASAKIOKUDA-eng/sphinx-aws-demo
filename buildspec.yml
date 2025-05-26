@@ -4,30 +4,129 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-      - pip install --upgrade pip
-      - pip install -r requirements.txt
+      - echo "Python version check"
+      - python --version
+      - pip --version
       
   pre_build:
     commands:
-      - echo "Starting Sphinx documentation build..."
+      - echo "========================================="
+      - echo "COMPLETE REPOSITORY STRUCTURE ANALYSIS"
+      - echo "========================================="
+      - pwd
+      - echo ""
+      - echo "=== ROOT DIRECTORY CONTENTS ==="
       - ls -la
-      - echo "Checking for conf.py and index.rst:"
-      - ls -la *.py *.rst || echo "Files not in root"
+      - echo ""
+      - echo "=== ALL FILES IN REPOSITORY ==="
+      - find . -type f | sort
+      - echo ""
+      - echo "=== ALL DIRECTORIES ==="
+      - find . -type d | sort
+      - echo ""
+      - echo "=== CHECKING FOR SPHINX FILES ==="
+      - echo "Looking for conf.py:"
+      - find . -name "conf.py" -type f
+      - echo "Looking for index.rst:"
+      - find . -name "index.rst" -type f
+      - echo "Looking for *.rst files:"
+      - find . -name "*.rst" -type f
+      - echo ""
+      - echo "=== CHECKING FOR BUILD FILES ==="
+      - echo "Looking for Makefile:"
+      - find . -name "Makefile" -type f
+      - echo "Looking for requirements.txt:"
+      - find . -name "requirements.txt" -type f
+      - echo ""
+      - echo "=== FILE CONTENTS ANALYSIS ==="
+      - if [ -f "requirements.txt" ]; then
+          echo "Content of requirements.txt:";
+          cat requirements.txt;
+        else
+          echo "requirements.txt not found in root";
+        fi
+      - echo ""
+      - if [ -f "conf.py" ]; then
+          echo "Content of conf.py:";
+          cat conf.py;
+        else
+          echo "conf.py not found in root";
+        fi
+      - echo ""
+      - if [ -f "Makefile" ]; then
+          echo "Content of Makefile:";
+          cat Makefile;
+        else
+          echo "Makefile not found in root";
+        fi
+      - echo ""
+      - if [ -f "index.rst" ]; then
+          echo "Content of index.rst (first 20 lines):";
+          head -20 index.rst;
+        else
+          echo "index.rst not found in root";
+        fi
+      - echo ""
+      - echo "=== PYTHON PACKAGE CHECK ==="
+      - pip list | grep -i sphinx || echo "Sphinx not installed yet"
       
   build:
     commands:
-      - echo "Building HTML documentation..."
-      - make html
-      
-  post_build:
-    commands:
-      - echo "Build completed successfully"
-      - ls -la _build/html/
+      - echo "========================================="
+      - echo "ATTEMPTING DIFFERENT BUILD APPROACHES"
+      - echo "========================================="
+      - echo ""
+      - echo "=== APPROACH 1: Installing from requirements.txt ==="
+      - if [ -f "requirements.txt" ]; then
+          echo "Installing from requirements.txt...";
+          pip install -r requirements.txt;
+          echo "Packages after installation:";
+          pip list | grep -i sphinx;
+        else
+          echo "No requirements.txt found, installing basic packages...";
+          pip install sphinx sphinx-rtd-theme;
+        fi
+      - echo ""
+      - echo "=== APPROACH 2: Checking available make targets ==="
+      - if [ -f "Makefile" ]; then
+          echo "Available make targets:";
+          make help || make -n || echo "No help target available";
+        else
+          echo "No Makefile found";
+        fi
+      - echo ""
+      - echo "=== APPROACH 3: Direct sphinx-build attempt ==="
+      - if [ -f "conf.py" ]; then
+          echo "Found conf.py, attempting direct sphinx-build...";
+          mkdir -p _build/html;
+          sphinx-build -b html . _build/html || echo "Direct sphinx-build failed";
+        else
+          echo "No conf.py found for direct sphinx-build";
+        fi
+      - echo ""
+      - echo "=== APPROACH 4: make html attempt ==="
+      - if [ -f "Makefile" ]; then
+          echo "Attempting make html...";
+          make html || echo "make html failed";
+        else
+          echo "No Makefile found for make html";
+        fi
+      - echo ""
+      - echo "=== FINAL DIRECTORY CHECK ==="
+      - echo "Checking for _build directory:";
+      - find . -name "_build" -type d;
+      - if [ -d "_build" ]; then
+          echo "Contents of _build:";
+          ls -la _build/;
+          if [ -d "_build/html" ]; then
+            echo "Contents of _build/html:";
+            ls -la _build/html/;
+          fi
+        fi
       
 artifacts:
   files:
-    - '_build/html/**/*'
-  base-directory: '_build/html'
+    - '**/*'
 cache:
   paths:
     - '/root/.cache/pip/**/*'
