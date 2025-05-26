@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: /
-    destination: s3://your-bucket-name/docs
+    destination: /var/www/html
 
 hooks:
   BeforeInstall:
