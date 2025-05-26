@@ -5,18 +5,29 @@ phases:
       python: 3.9
     commands:
       - pip install --upgrade pip
-      - pip install sphinx sphinx-rtd-theme
+      - pip install -r requirements.txt
       
   pre_build:
     commands:
-      - echo "Creating documentation structure..."
-      - mkdir -p docs/build/html
+      - echo "Starting Sphinx documentation build..."
+      - ls -la
+      - echo "Checking for conf.py and index.rst:"
+      - ls -la *.py *.rst || echo "Files not in root"
       
   build:
     commands:
-      - sphinx-build -b html . docs/build/html
+      - echo "Building HTML documentation..."
+      - make html
+      
+  post_build:
+    commands:
+      - echo "Build completed successfully"
+      - ls -la _build/html/
       
 artifacts:
   files:
-    - docs/build/html/**/*
-  base-directory: docs/build/html
+    - '_build/html/**/*'
+  base-directory: '_build/html'
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'
