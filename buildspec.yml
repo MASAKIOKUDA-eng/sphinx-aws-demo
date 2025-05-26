@@ -1,5 +1,4 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
@@ -7,19 +6,20 @@ phases:
     commands:
       - pip install --upgrade pip
       - pip install -r requirements.txt
-
   build:
     commands:
       - echo "Building documentation..."
       - sphinx-build -b html . _build/html
+      - echo "Copying appspec.yml to build output..."
+      - cp appspec.yml _build/html/
       - echo "Verifying build output..."
       - ls -la _build/html/
-
+      - echo "Checking for appspec.yml..."
+      - ls -la _build/html/appspec.yml
 artifacts:
   files:
     - '**/*'
   base-directory: '_build/html'
-
 cache:
   paths:
     - '/root/.cache/pip/**/*'
