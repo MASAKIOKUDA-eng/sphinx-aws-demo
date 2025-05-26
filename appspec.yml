@@ -1,12 +1,5 @@
 version: 0.0
 os: linux
-
 files:
   - source: /
-    destination: /var/www/html
-
-hooks:
-  BeforeInstall:
-    - location: scripts/cleanup.sh
-      timeout: 300
-      runas: root
+    destination: /tmp/test-deploy
