@@ -5,30 +5,31 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-      - echo "Setting up Python environment..."
-      - python --version
-      - pip --version
+      - echo "Installing dependencies..."
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
 
   pre_build:
     commands:
-      - echo "Installing dependencies from requirements.txt..."
-      - pip install --upgrade pip
-      - pip install -r requirements.txt
-      - echo "Verifying installation..."
-      - pip list | grep -i sphinx
+      - echo "=== Checking project structure ==="
+      - ls -la
+      - echo "=== Checking for Makefile ==="
+      - if [ -f "Makefile" ]; then echo "Makefile exists"; cat Makefile; else echo "Makefile not found"; fi
+      - echo "=== Checking for conf.py ==="
+      - if [ -f "conf.py" ]; then echo "conf.py exists"; else echo "conf.py not found"; fi
 
   build:
     commands:
-      - echo "Building HTML documentation with make..."
-      - make html
-      - echo "Verifying build output..."
+      - echo "=== Building documentation with sphinx-build ==="
+      - mkdir -p _build/html
+      - sphinx-build -b html . _build/html
+      - echo "=== Checking build output ==="
       - ls -la _build/html/
 
   post_build:
     commands:
       - echo "Build completed successfully!"
-      - echo "Generated files:"
-      - find _build/html -name "*.html" | head -10
+      - find _build/html -name "*.html" | head -5
 
 artifacts:
   files:
