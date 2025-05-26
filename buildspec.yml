@@ -1,5 +1,4 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
@@ -10,19 +9,14 @@ phases:
       
   pre_build:
     commands:
-      - echo "Starting documentation build..."
+      - echo "Creating documentation structure..."
+      - mkdir -p docs/build/html
       
   build:
     commands:
-      - mkdir -p docs/build/html
-      - sphinx-build -b html docs/source docs/build/html
+      - sphinx-build -b html . docs/build/html
       
 artifacts:
   files:
     - docs/build/html/**/*
-  discard-paths: no
   base-directory: docs/build/html
-
-cache:
-  paths:
-    - '/root/.cache/pip/**/*'
